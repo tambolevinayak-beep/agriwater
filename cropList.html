@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crops | Agri Water Track</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .crop-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:22px;
+      margin-top:24px;
+    }
+
+    .crop-card{
+      background:#fff;
+      border-radius:16px;
+      overflow:hidden;
+      cursor:pointer;
+      box-shadow:0 8px 22px rgba(0,0,0,0.08);
+      transition:transform .3s, box-shadow .3s;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .crop-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 18px 40px rgba(0,0,0,0.15);
+    }
+
+    .crop-card img{
+      width:100%;
+      height:160px;
+      object-fit:cover;
+    }
+
+    .crop-content{
+      padding:14px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .crop-title{
+      font-size:1.1rem;
+      font-weight:600;
+      color:#1b5e20;
+      margin-bottom:6px;
+    }
+
+    .crop-desc{
+      font-size:.9rem;
+      color:#555;
+      margin-bottom:10px;
+    }
+
+    .crop-tag{
+      align-self:flex-start;
+      padding:4px 10px;
+      font-size:.75rem;
+      font-weight:600;
+      border-radius:20px;
+      color:#fff;
+    }
+
+    .low{ background:#2e7d32; }
+    .moderate{ background:#f9a825; color:#333; }
+    .high{ background:#ef6c00; }
+    .very-high{ background:#c62828; }
+  </style>
+</head>
+
+<body class="page-bg">
+
+<header class="nav-sticky">
+  <a class="brand" href="index.html">Agri Water Track</a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cropList.html" class="active">Crops</a>
+    <a href="calculator.html">Calculator</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <section class="card">
+    <h2 class="section-title">Crop Selection</h2>
+    <p class="muted center">
+      Select a crop to view details and calculate water requirement.
+    </p>
+
+    <div class="crop-grid">
+
+      <!-- RICE -->
+      <div class="crop-card" onclick="openCrop('rice')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz038ws4PTCrJgZF8DrkaDZMystXvPm7CEEw&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Rice</div>
+            <div class="crop-desc">
+              Staple food crop with very high water requirement.
+            </div>
+          </div>
+          <span class="crop-tag very-high">Very High Water</span>
+        </div>
+      </div>
+
+      <!-- WHEAT -->
+      <div class="crop-card" onclick="openCrop('wheat')">
+        <img src="https://m.media-amazon.com/images/I/714xCG6CxKL.AC_UF1000,1000_QL80.jpg">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Wheat</div>
+            <div class="crop-desc">
+              Major cereal crop with moderate irrigation needs.
+            </div>
+          </div>
+          <span class="crop-tag moderate">Moderate Water</span>
+        </div>
+      </div>
+
+      <!-- MAIZE -->
+      <div class="crop-card" onclick="openCrop('maize')">
+        <img src="https://peptechbio.com/wp-content/uploads/2023/09/wouter-supardi-salari-HE_MjmWh9eQ-unsplash-scaled.jpg">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Maize</div>
+            <div class="crop-desc">
+              Water-efficient cereal suitable for varied climates.
+            </div>
+          </div>
+          <span class="crop-tag moderate">Moderate Water</span>
+        </div>
+      </div>
+
+      <!-- OATS -->
+      <div class="crop-card" onclick="openCrop('oats')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIt3dm9yyFDITVBC_ZYKMV4zzDQY9H8MNUeQ&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Oats</div>
+            <div class="crop-desc">
+              Nutritious crop with low to moderate water needs.
+            </div>
+          </div>
+          <span class="crop-tag low">Low Water</span>
+        </div>
+      </div>
+
+      <!-- COTTON -->
+      <div class="crop-card" onclick="openCrop('cotton')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpNBTJOOmjX_eIixTexo9tlVMSoURjdgRKwA&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Cotton</div>
+            <div class="crop-desc">
+              Cash crop requiring high water during flowering.
+            </div>
+          </div>
+          <span class="crop-tag high">High Water</span>
+        </div>
+      </div>
+
+      <!-- SOYBEAN -->
+      <div class="crop-card" onclick="openCrop('soybean')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIryCHcCtTffwMFn3Xi5UpU2tF7qzRK9nLuw&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Soybean</div>
+            <div class="crop-desc">
+              Oilseed crop with moderate water requirement.
+            </div>
+          </div>
+          <span class="crop-tag moderate">Moderate Water</span>
+        </div>
+      </div>
+
+      <!-- BAJRA -->
+      <div class="crop-card" onclick="openCrop('bajra')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgHXDLZsuPiWhP7oUpOW7migYvom3LMkFNqw&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Bajra</div>
+            <div class="crop-desc">
+              Drought-resistant crop ideal for low water regions.
+            </div>
+          </div>
+          <span class="crop-tag low">Low Water</span>
+        </div>
+      </div>
+
+      <!-- JOWAR -->
+      <div class="crop-card" onclick="openCrop('jowar')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaPgy4QVn_d0kM1cUfyq_WXQdcHQXYFoQvyw&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Jowar</div>
+            <div class="crop-desc">
+              Hardy crop with minimal irrigation needs.
+            </div>
+          </div>
+          <span class="crop-tag low">Low Water</span>
+        </div>
+      </div>
+
+      <!-- GROUNDNUT -->
+      <div class="crop-card" onclick="openCrop('groundnut')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_U1xlfLeQHGjrDy7oQB25HXSmzsyvhc3sxA&s">
+        <div class="crop-content">
+          <div>
+            <div class="crop-title">Groundnut</div>
+            <div class="crop-desc">
+              Oilseed crop with moderate water requirement.
+            </div>
+          </div>
+          <span class="crop-tag moderate">Moderate Water</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">© 2026 Agri Water Track</footer>
+
+<script>
+  function openCrop(crop){
+    window.location.href = "crop.html?crop=" + crop;
+  }
+</script>
+
+</body>
+</html>

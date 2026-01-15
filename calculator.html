@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculator | Agri Water Track</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body class="page-bg">
+
+<header class="nav-sticky">
+  <a class="brand" href="index.html">Agri Water Track</a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cropList.html">Crops</a>
+    <a href="calculator.html" class="active">Calculator</a>
+    <a href="dashboard.html">dashboard</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- CALCULATOR -->
+  <section class="card">
+    <h2>Water & Yield Calculator</h2>
+    <p class="muted small">
+      Calculate total expected yield and irrigation water requirement.
+    </p>
+
+    <div class="row">
+      <select id="cropSelect">
+        <option value="rice">Rice</option>
+        <option value="wheat">Wheat</option>
+        <option value="maize">Maize</option>
+        <option value="oats">Oats</option>
+        <option value="cotton">Cotton</option>
+        <option value="soybean">Soybean</option>
+        <option value="bajra">Bajra</option>
+        <option value="jowar">Jowar</option>
+        <option value="groundnut">Groundnut</option>
+      </select>
+
+      <input id="area" type="number" placeholder="Enter area (acres)">
+    </div>
+
+    <!-- <div class="actions">
+      <button class="btn" onclick="calculateAndCompare()">Calculate</button>
+      <button class="btn ghost" onclick="saveCalcFromCalc()">Save</button>
+    </div> -->
+    <div class="actions">
+  <button class="btn" onclick="calculateAndCompare()">Calculate</button>
+  <button class="btn ghost" onclick="saveCalcFromCalc()">Save</button>
+  <button class="btn ghost" onclick="exportPDF()">Export PDF</button>
+</div>
+
+
+    <!-- OUTPUT -->
+    <div id="calcOut" class="result hide">
+      <p id="calcOutText"></p>
+    </div>
+  </section>
+
+  <!-- COMPARISON GRAPH -->
+  <section class="card">
+    <h3>Water Requirement Comparison (per acre)</h3>
+    <canvas id="compareChart" height="220"></canvas>
+  </section>
+
+</main>
+
+<footer class="footer">© 2026 Agri Water Track</footer>
+
+<script src="script.js"></script>
+
+<script>
+let compareChart;
+
+function calculateAndCompare(){
+  const cropId = document.getElementById('cropSelect').value;
+  const acres = Number(document.getElementById('area').value);
+
+  if(!acres || acres <= 0){
+    alert("Please enter valid land area");
+    return;
+  }
+
+  const crop = window.CROPS[cropId];
+
+  // SAME FORMULA (UNCHANGED)
+  const perAcreYield = crop.yieldKgPerHa;
+  const perAcreWater = crop.yieldKgPerHa * crop.waterLperKg;
+
+  const totalYield = perAcreYield * acres;
+  const totalWater = perAcreWater * acres;
+
+  // OUTPUT
+  document.getElementById('calcOutText').innerHTML =
+    `<b>Crop:</b> ${crop.name}<br>
+     <b>Area:</b> ${acres} acres<br>
+     <b>Expected Yield:</b> ${totalYield.toLocaleString()} kg<br>
+     <b>Water Required:</b> ${totalWater.toLocaleString()} litres`;
+
+  document.getElementById('calcOut').classList.remove('hide');
+
+  // GRAPH DATA (ALL CROPS)
+  const labels = Object.values(window.CROPS).map(c => c.name);
+  const values = Object.values(window.CROPS).map(
+    c => c.yieldKgPerHa * c.waterLperKg
+  );
+
+  const bgColors = Object.values(window.CROPS).map(c =>
+    c.id === cropId ? 'rgba(46,125,50,0.9)' : 'rgba(46,125,50,0.4)'
+  );
+
+  const ctx = document.getElementById('compareChart').getContext('2d');
+
+  if(compareChart) compareChart.destroy();
+
+  compareChart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels: labels,
+      datasets:[{
+        label:'Water per acre (litres)',
+        data: values,
+        backgroundColor: bgColors
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{ display:false }
+      },
+      scales:{
+        y:{ beginAtZero:true }
+      }
+    }
+  });
+
+  // SAVE LAST CALC
+  window._lastCalc = {
+    crop: cropId,
+    cropName: crop.name,
+    acres,
+    yieldKg: Math.round(totalYield),
+    liters: Math.round(totalWater),
+    ts: new Date().toISOString()
+  };
+}
+
+/////pdf
+function exportPDF(){
+  if(!window._lastCalc){
+    alert("Please calculate first");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text("Agri Water Track - Calculation Report", 14, 20);
+
+  doc.setFontSize(12);
+  doc.text(`Crop: ${_lastCalc.cropName}`, 14, 35);
+  doc.text(`Area: ${_lastCalc.acres} acres`, 14, 45);
+  doc.text(`Expected Yield: ${_lastCalc.yieldKg} kg`, 14, 55);
+  doc.text(`Water Required: ${_lastCalc.liters} litres`, 14, 65);
+
+  doc.text("Note:", 14, 80);
+  doc.setFontSize(11);
+  doc.text(
+    "Efficient irrigation methods like drip or sprinkler\ncan significantly reduce water usage.",
+    14,
+    90
+  );
+
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 115);
+
+  doc.save("Agri_Water_Calculation.pdf");
+}
+
+
+</script>
+
+</body>
+</html>

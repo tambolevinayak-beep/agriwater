@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard | Agri Water Track</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body class="page-bg">
+
+<header class="nav-sticky">
+  <a class="brand" href="index.html">Agri Water Track</a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cropList.html">Crops</a>
+    <a href="calculator.html">Calculator</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- TITLE CARD -->
+  <section class="card">
+    <h2>Saved Calculations Dashboard</h2>
+    <p class="muted small">
+      View and export your previously saved crop water calculations.
+    </p>
+  </section>
+
+  <!-- TABLE CARD -->
+  <section class="card">
+    <div style="overflow-x:auto">
+      <table style="width:100%; border-collapse:collapse">
+        <thead>
+          <tr style="background:#e8f5e9">
+            <th style="padding:10px;text-align:left">Crop</th>
+            <th style="padding:10px;text-align:left">Area (acres)</th>
+            <th style="padding:10px;text-align:left">Water Used (L)</th>
+            <th style="padding:10px;text-align:left">Date</th>
+          </tr>
+        </thead>
+        <tbody id="recordTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ACTION BUTTONS -->
+  <div class="actions" style="margin-top:10px">
+    <button class="btn" onclick="exportCSV()">Export CSV</button>
+    <button class="btn ghost" onclick="exportPDF()">Export PDF</button>
+    <button class="btn ghost" onclick="clearRecords()">Clear All</button>
+  </div>
+
+</main>
+
+<footer class="footer">© 2026 Agri Water Track</footer>
+
+<script src="script.js"></script>
+
+<script>
+/* ================= LOAD RECORDS ================= */
+const table = document.getElementById('recordTable');
+const records = JSON.parse(localStorage.getItem('awt_records') || '[]');
+
+if(records.length === 0){
+  table.innerHTML = `
+    <tr>
+      <td colspan="4" class="muted" style="padding:12px;text-align:center">
+        No records saved yet.
+      </td>
+    </tr>`;
+} else {
+  records.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="padding:10px">${r.cropName}</td>
+      <td style="padding:10px">${r.acres}</td>
+      <td style="padding:10px">${r.liters.toLocaleString()}</td>
+      <td style="padding:10px">${new Date(r.ts).toLocaleString()}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+/* ================= EXPORT CSV ================= */
+function exportCSV(){
+  if(records.length === 0){
+    alert("No records to export");
+    return;
+  }
+
+  let csv = "Crop,Area (acres),Water Used (L),Date\n";
+  records.forEach(r=>{
+    csv += `${r.cropName},${r.acres},${r.liters},"${new Date(r.ts).toLocaleString()}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Agri_Water_Records.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/* ================= EXPORT PDF ================= */
+function exportPDF(){
+  if(records.length === 0){
+    alert("No records to export");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text("Agri Water Track - Saved Calculations", 14, 18);
+
+  doc.setFontSize(11);
+  let y = 30;
+
+  records.forEach((r, i) => {
+    doc.text(
+      `${i+1}. ${r.cropName} | Area: ${r.acres} acres | Water: ${r.liters} L | ${new Date(r.ts).toLocaleString()}`,
+      14,
+      y
+    );
+    y += 8;
+    if(y > 270){
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  doc.save("Agri_Water_Records.pdf");
+}
+
+/* ================= CLEAR ================= */
+function clearRecords(){
+  if(confirm("Are you sure you want to delete all saved records?")){
+    localStorage.removeItem("awt_records");
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>

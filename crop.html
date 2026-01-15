@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crop Details | Agri Water Track</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="page-bg">
+
+<header class="nav-sticky">
+  <a class="brand" href="index.html">Agri Water Track</a>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cropList.html">Crops</a>
+    <a href="calculator.html">Calculator</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="card crop-detail">
+
+  <div>
+    <h2 id="cropTitle"></h2>
+    <img id="cropImg">
+
+    <p id="cropDesc"></p>
+
+    <div class="details-grid">
+      <div><b>Avg water:</b> <span id="waterVal"></span></div>
+      <div><b>Yield:</b> <span id="yieldVal"></span></div>
+      <div><b>Soil:</b> <span id="soilVal"></span></div>
+      <div><b>Season:</b> <span id="seasonVal"></span></div>
+    </div>
+
+    <h4>Season-wise Steps</h4>
+    <ul id="seasonList"></ul>
+
+    <h4>Recommendations</h4>
+    <ul id="recoList"></ul>
+
+    <h4>Calculator (per acre outcomes)</h4>
+
+    <input id="areaInput" type="number" placeholder="Enter area (acres)">
+
+    <select id="irrigMethod">
+      <option value="default">Normal</option>
+      <option value="drip">Drip</option>
+      <option value="sprinkler">Sprinkler</option>
+    </select>
+
+    <button class="btn" onclick="calcForCrop()">Calculate</button>
+
+    <div id="calcResult" class="result hide">
+      <p id="calcText"></p>
+    </div>
+  </div>
+
+  <div>
+    <iframe id="cropVideo"
+        width="100%"
+        height="220"
+        frameborder="0"
+        allowfullscreen>
+</iframe>
+
+    
+    <!-- <video id="cropVideo" controls muted></video> -->
+    <!-- <canvas id="compChart" height="200"></canvas> -->
+  </div>
+
+</section>
+
+</main>
+
+<footer class="footer">© 2026 Agri Water Track</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

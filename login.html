@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login | Agri Water Track</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-bg">
+
+  <div class="centered">
+    <div class="card auth-card">
+      <h1 class="brand-title">Agri Water Track</h1>
+      <p class="muted">Login to manage your saved calculations</p>
+
+      <input id="username" placeholder="Username" />
+      <input id="password" type="password" placeholder="Password" />
+
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn" onclick="login()">Login</button>
+        <a class="btn ghost" href="index.html">Continue as guest</a>
+      </div>
+
+      <p class="small muted" style="margin-top:10px">Demo login: <b>admin</b> / <b>1234</b></p>
+      <p id="loginMsg" class="muted"></p>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>

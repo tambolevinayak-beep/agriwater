@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agri Water Track</title>
+
+  <!-- Existing CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Index-only enhancements -->
+  <style>
+    .hero-buttons{
+      display:flex;
+      gap:12px;
+      margin-top:16px;
+      flex-wrap:wrap;
+    }
+
+    .recommend-box{
+      background:#f1fff1;
+      border-left:6px solid #2e7d32;
+      padding:14px;
+      border-radius:10px;
+      margin-top:16px;
+      font-weight:600;
+    }
+
+    .graph-controls{
+      margin-bottom:10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .graph-note{
+      font-size:.9rem;
+      color:#6b6b6b;
+      margin-top:8px;
+    }
+  </style>
+</head>
+
+<body class="page-bg">
+
+<!-- NAVBAR -->
+<header class="nav-sticky">
+  <a class="brand" href="index.html">Agri Water Track</a>
+  <nav class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="cropList.html">Crops</a>
+    <a href="calculator.html">Calculator</a>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">dashboard</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="card hero">
+    <div class="hero-left">
+      <h1>Agri Water Track</h1>
+      <p class="lead">
+        Smart crop water management and decision support system
+        for sustainable agriculture.
+      </p>
+
+      <div class="how-list">
+        <h3>How it works</h3>
+        <ol>
+          <li>Select a crop and land area</li>
+          <li>Calculate water requirement</li>
+          <li>Compare crops visually</li>
+          <li>Choose water-efficient crops</li>
+        </ol>
+      </div>
+
+      <div class="hero-buttons">
+        <a class="btn" href="croplist.html">Explore Crops</a>
+        <a class="btn ghost" href="calculator.html">Open Calculator</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img
+        src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=900&auto=format&fit=crop"
+        alt="Agriculture field">
+    </div>
+  </section>
+
+  <!-- Why this helps -->
+    <section class="card">
+      <h2>Why this helps farmers</h2>
+      <div class="grid-3">
+        <div class="info-card">
+          <img src="https://morcapumps.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-15-at-11.52.33-AM-2.webp">
+          <h4>Know Water Use</h4>
+          <p>Estimate litres of water needed so farmers can plan irrigation & conserve groundwater.</p>
+        </div>
+        <div class="info-card">
+          <img src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs43016-025-01231-x/MediaObjects/43016_2025_1231_Fig3_HTML.png">
+          <h4>Compare Crops</h4>
+          <p>See which crops use less water per <b>acre</b> and select better crop mixes.</p>
+        </div>
+        <div class="info-card">
+          <img src="https://flotaa.com/wp-content/uploads/2024/11/water-agriculture.jpg">
+          <h4>Practical Tips</h4>
+          <p>Get recommendations — drip irrigation, mulching, rainwater harvesting and more.</p>
+        </div>
+      </div>
+    </section>
+
+
+  <!-- GRAPH SECTION -->
+  <section class="card">
+    <h3>Crop Water Requirement Comparison (per acre)</h3>
+
+    <div class="graph-controls">
+      <button class="btn ghost" onclick="toggleLowWater()">
+        Toggle: Water-Saving Crops
+      </button>
+    </div>
+
+    <canvas id="sampleChart" height="160"></canvas>
+
+    <p class="graph-note">
+      Hover on bars to see water requirement. Animation helps easy comparison.
+    </p>
+
+    <!-- SMART RECOMMENDATION
+    <div class="recommend-box">
+      💡 Smart Recommendation:
+      Based on water availability, <b>Bajra</b> is recommended instead of
+      <b>Rice</b> for sustainable farming. -->
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">© 2026 Agri Water Track</footer>
+
+<!-- GRAPH SCRIPT -->
+<script>
+  const ctx = document.getElementById('sampleChart').getContext('2d');
+
+  const cropData = [
+    { name:'Rice', value:2500*5000 },
+    { name:'Wheat', value:1800*3500 },
+    { name:'Maize', value:1200*4500 },
+    { name:'Oats', value:1000*3000 },
+    { name:'Cotton', value:2200*1500 },
+    { name:'Soybean', value:1700*2000 },
+    { name:'Bajra', value:600*2200 },
+    { name:'Jowar', value:900*2500 },
+    { name:'Groundnut', value:1500*1800 }
+  ];
+
+  const colors = [
+    '#4CAF50','#8BC34A','#CDDC39','#AED581',
+    '#FFA000','#7CB342','#9CCC65','#81C784','#C5E1A5'
+  ];
+
+  let showLowOnly = false;
+  let chart;
+
+  function buildChart(data){
+    if(chart) chart.destroy();
+
+    chart = new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:data.map(c=>c.name),
+        datasets:[{
+          data:data.map(c=>c.value),
+          backgroundColor:colors.slice(0,data.length),
+          borderRadius:4,
+          borderSkipped:false
+        }]
+      },
+      options:{
+        responsive:true,
+        animation:{ duration:1200, easing:'easeOutCubic' },
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{
+              label:(c)=> c.raw.toLocaleString()+' Litres'
+            }
+          }
+        },
+        scales:{
+          y:{
+            beginAtZero:true,
+            title:{ display:true, text:'Litres per acre' }
+          }
+        }
+      }
+    });
+  }
+
+  function toggleLowWater(){
+    showLowOnly=!showLowOnly;
+    if(showLowOnly){
+      buildChart(cropData.filter(c =>
+        ['Bajra','Jowar','Oats'].includes(c.name)
+      ));
+    } else {
+      buildChart(cropData);
+    }
+  }
+
+  buildChart(cropData);
+</script>
+
+</body>
+</html>
